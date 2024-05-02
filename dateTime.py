@@ -1,6 +1,3 @@
-import pandas as pd
-from datetime import datetime
-
 import datetime
 
 start = datetime.datetime.strptime("21-06-2020", "%d-%m-%Y")
