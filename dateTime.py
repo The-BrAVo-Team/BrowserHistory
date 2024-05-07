@@ -23,11 +23,12 @@ def create_date_time_output(start_date, end_date, start_time, end_time):
         if random.random() < 0.5:  # Randomly skip some dates
             continue
         time_stamps = generate_time_stamp(start_time, end_time)
-        random.shuffle(time_stamps)
-        num_timestamps = min(len(time_stamps), 20)
-        for timestamp in time_stamps[:num_timestamps]:
+        num_timestamps = random.randint(1, min(len(time_stamps), 20))  # Randomly select number of timestamps
+        selected_timestamps = random.sample(time_stamps, num_timestamps)
+        for timestamp in selected_timestamps:
             date_timestamps.append(f'{date.strftime("%Y-%m-%d")} {timestamp}')
     return sorted(date_timestamps) # Sort the datetime output
 
 if __name__ == '__main__':
     print(create_date_time_output("2021-05-22", "2021-06-22", "22:00:00", "23:00:00"))
+
