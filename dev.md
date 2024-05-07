@@ -13,3 +13,6 @@
 
 - ### Store Secrets in .env file ###
     - This should be self explanatory
+
+- ### Work in a branch ###
+    - Do this to avoid any future issues and merge conflicts.
