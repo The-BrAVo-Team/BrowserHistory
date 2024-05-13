@@ -18,11 +18,21 @@ def simple_web_crawler(url):
         for link in links:
             href = link.get('href')
             if href:
-                print(href)
+                if "https://www." in href:
+                    print(href)
     else:
         # Print an error message if the request was not successful
         print(f"Failed to fetch URL: {url}")
 
 
-url = 'https://www.usatoday.com/news/nation/' # Replace this URL with the one you want to crawl
-simple_web_crawler(url)
+def read_urls_from_file(file_path):
+    with open(file_path, 'r') as file:
+        urls = [line.strip() for line in file.readlines()]
+    return urls
+
+
+file_path = 'normalurls.txt'  # Replace the string with the path to your text file containing URLs
+urls = read_urls_from_file(file_path)
+
+for url in urls:
+    simple_web_crawler(url)
