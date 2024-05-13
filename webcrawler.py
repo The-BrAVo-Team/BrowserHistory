@@ -17,8 +17,7 @@ def simple_web_crawler(url):
         # Print the extracted links
         for link in links:
             href = link.get('href')
-            if href:
-                if "https://www." in href:
+            if href and "https://www." in href:
                     print(href)
     else:
         # Print an error message if the request was not successful
