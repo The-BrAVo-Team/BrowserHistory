@@ -1,6 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 
+# Add terms to this list that shouldn't appear in results
+reject_list = ["careers", "policies", "source", "Source", "privacy", "accessibility", "audio", "about", "="]
+
 def simple_web_crawler(url):
     # Send a GET request to the URL
     response = requests.get(url)
@@ -14,14 +17,18 @@ def simple_web_crawler(url):
         # For example, let's extract all the links on the page
         links = soup.find_all('a')
 
+        link_list = []
         # Print the extracted links
         for link in links:
             href = link.get('href')
-            if href and "https://www." in href:
-                    print(href)
+            if href and "https://www." in href and not any(x in href for x in reject_list):
+                link_list.append(href)
     else:
         # Print an error message if the request was not successful
-        print(f"Failed to fetch URL: {url}")
+        # print(f"Failed to fetch URL: {url}")
+        pass
+    
+    return set(link_list)
 
 
 def read_urls_from_file(file_path):
@@ -34,4 +41,5 @@ file_path = 'normalurls.txt'  # Replace the string with the path to your text fi
 urls = read_urls_from_file(file_path)
 
 for url in urls:
-    simple_web_crawler(url)
+    for link in simple_web_crawler(url):
+        print(link)
