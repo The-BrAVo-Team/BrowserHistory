@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 # Add terms to this list that shouldn't appear in results
 reject_list = ["careers", "policies", "source", "Source", "privacy", "accessibility", "audio", "about", "terms", "=", "#"]
 
-def simple_web_crawler(url):
+def web_crawler(url):
     link_list = []
     # Send a GET request to the URL
     response = requests.get(url)
@@ -32,9 +32,13 @@ def read_urls_from_file(file_path):
     return urls
 
 
-file_path = 'normalurls.txt'  # Replace the string with the path to your text file containing URLs
-urls = read_urls_from_file(file_path)
+if __name__ == '__main__':
+    file_path = 'normalurls.txt'  # Replace the string with the path to your text file containing URLs
+    urls = read_urls_from_file(file_path)
+    link_list = []
 
-for url in urls:
-    for link in simple_web_crawler(url):
+    for url in urls:
+        link_list.extend(web_crawler(url))
+    
+    for link in link_list:    
         print(link)
