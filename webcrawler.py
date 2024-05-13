@@ -2,9 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 
 # Add terms to this list that shouldn't appear in results
-reject_list = ["careers", "policies", "source", "Source", "privacy", "accessibility", "audio", "about", "="]
+reject_list = ["careers", "policies", "source", "Source", "privacy", "accessibility", "audio", "about", "terms", "=", "#"]
 
 def simple_web_crawler(url):
+    link_list = []
     # Send a GET request to the URL
     response = requests.get(url)
 
@@ -17,18 +18,12 @@ def simple_web_crawler(url):
         # For example, let's extract all the links on the page
         links = soup.find_all('a')
 
-        link_list = []
         # Print the extracted links
         for link in links:
             href = link.get('href')
             if href and "https://www." in href and not any(x in href for x in reject_list):
                 link_list.append(href)
-    else:
-        # Print an error message if the request was not successful
-        # print(f"Failed to fetch URL: {url}")
-        pass
-    
-    return set(link_list)
+        return set(link_list)
 
 
 def read_urls_from_file(file_path):
