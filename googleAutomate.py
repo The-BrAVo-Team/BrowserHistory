@@ -36,14 +36,12 @@ for query in query_list:
         search = soup.find_all('div', class_="yuRUbf")
         for h in search:
             links.append(h.a.get('href'))
-
+        links.extend(web_crawler(rnd.choice(links)))
+        
+links = set(links)
 driver.quit()
             
 
-if __name__ == '__main__': 
-    for i in range(20):
-        links.extend(web_crawler(rnd.choice(links)))
-        print("...")
-        
+if __name__ == '__main__':      
     print(links)
     quit()
