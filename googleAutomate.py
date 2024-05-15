@@ -21,6 +21,8 @@ query_list = read_keywords_from_file("keywords.txt")
 
 links = []
 
+rnd.shuffle(query_list)
+
 for query in query_list:
     query = query.replace(' ', '+')  
     # Specify number of pages on google search, each page contains 10 links
@@ -39,7 +41,7 @@ driver.quit()
             
 
 if __name__ == '__main__': 
-    for i in range(15):
+    for i in range(20):
         links.extend(web_crawler(rnd.choice(links)))
         print("...")
         

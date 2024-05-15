@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 # Add terms to this list that shouldn't appear in results
-reject_list = ["careers", "policies", "source", "Source", "privacy", "accessibility", "audio", "about", "terms", "=", "#"]
+reject_list = ["careers", "policies", "source", "Source", "privacy", "accessibility", "audio", "about", "terms", "=", "#", "@"]
 
 def web_crawler(url):
     link_list = []
