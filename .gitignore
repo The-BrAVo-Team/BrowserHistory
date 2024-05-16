@@ -1,4 +1,5 @@
 venv/
+myenv/
 __pycache__/
 build/
 dist/

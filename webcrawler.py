@@ -1,10 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
 
-# Add terms to this list that shouldn't appear in results
+# List of terms to reject from the results
 reject_list = ["careers", "policies", "source", "Source", "privacy", "accessibility", "audio", "about", "terms", "=", "#", "@"]
 
 def web_crawler(url):
+    """
+    Crawls a given URL to extract valid links.
+    """
     link_list = []
     try:
         # Send a GET request to the URL with a timeout of 10 seconds
@@ -15,40 +18,49 @@ def web_crawler(url):
             # Parse the HTML content of the page
             soup = BeautifulSoup(response.content, 'html.parser')
 
-            # Find and extract relevant information from the page
-            # For example, let's extract all the links on the page
+            # Extract all anchor tags
             links = soup.find_all('a')
 
-            # Print the extracted links
+            # Filter and collect valid links
             for link in links:
                 href = link.get('href')
                 if href and "https://www." in href and not any(x in href for x in reject_list):
                     link_list.append(href)
-            if len(link_list) > 0:
-                return set(link_list)
-            else:
-                return ['https://www.google.com']
 
+            # Return a set of unique valid links
+            return set(link_list) if link_list else {'https://www.google.com'}
         else:
-            return ['https://www.yahoo.com']
-
-    except Exception:
-        return ['https://www.chess.com']
-
+            # Return a default URL if the request was not successful
+            return {'https://www.yahoo.com'}
+    except Exception as e:
+        # Handle exceptions and return a fallback URL
+        print(f"Error occurred while crawling {url}: {e}")
+        return {'https://www.chess.com'}
 
 def read_urls_from_file(file_path):
-    with open(file_path, 'r') as file:
-        urls = [line.strip() for line in file.readlines()]
-    return urls
-
+    """
+    Reads URLs from a given file.
+    """
+    try:
+        with open(file_path, 'r') as file:
+            return [line.strip() for line in file.readlines()]
+    except FileNotFoundError:
+        print(f"Error: The file {file_path} was not found.")
+        return []
+    except Exception as e:
+        print(f"An error occurred while reading the file {file_path}: {e}")
+        return []
 
 if __name__ == '__main__':
-    file_path = 'goodurls.txt'  # Replace the string with the path to your text file containing URLs
+    file_path = 'search_engines.txt'  # Replace 
     urls = read_urls_from_file(file_path)
     link_list = []
 
-    for url in urls:
-        link_list.extend(web_crawler(url))
-    
-    for link in link_list:    
-        print(link)
+    if urls:  # Proceed only if URLs were successfully read
+        for url in urls:
+            link_list.extend(web_crawler(url))
+        
+        for link in set(link_list):
+            print(link)
+    else:
+        print("No URLs to process.")
