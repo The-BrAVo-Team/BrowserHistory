@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from webcrawler import web_crawler
 import random as rnd
@@ -10,10 +11,13 @@ def read_keywords_from_file(file_path):
     return keywords
 
 chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument("--headless")
-
-ChromeDriverManager().install()
-driver = webdriver.Chrome()
+# Path to any folder where webdriver chrome data will go
+path = "C:\\Users\\keoca\\Desktop\\TWP3\\History"
+chrome_options.add_argument("--user-data-dir=" + path)
+# Name of user folder which will conatin History file
+chrome_options.add_argument("--profile-directory=Default")
+service = ChromeService(ChromeDriverManager().install())
+driver = webdriver.Chrome(service=service, options=chrome_options)
 
 search_engines = read_keywords_from_file("search_engines.txt")
 
