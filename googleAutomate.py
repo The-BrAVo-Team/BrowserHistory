@@ -12,7 +12,7 @@ def read_keywords_from_file(file_path):
 
 chrome_options = webdriver.ChromeOptions()
 # Path to any folder where webdriver chrome data will go
-path = "C:\\Users\\keoca\\Desktop\\TWP3\\History"
+path = "C:\\Users\\keoca\\Desktop\\TWP3\\TestUser"
 chrome_options.add_argument("--user-data-dir=" + path)
 # Name of user folder which will conatin History file
 chrome_options.add_argument("--profile-directory=Default")
