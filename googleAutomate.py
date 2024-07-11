@@ -4,6 +4,7 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from webcrawler import web_crawler
 import random as rnd
+import os, shutil;
 
 def read_keywords_from_file(file_path):
     with open(file_path, 'r') as file:
@@ -12,9 +13,14 @@ def read_keywords_from_file(file_path):
 
 chrome_options = webdriver.ChromeOptions()
 # Path to any folder where webdriver chrome data will go
+# WILL OVERWRITE PATH/Default
 path = "C:\\Users\\keoca\\Desktop\\TWP3\\TestUser"
+# Removes the Default folder which contains the history files to start from a clean slate.
+if os.path.exists(path + "\\Default"):
+    shutil.rmtree(path + "\\Default")
 chrome_options.add_argument("--user-data-dir=" + path)
 # Name of user folder which will conatin History file
+
 chrome_options.add_argument("--profile-directory=Default")
 service = ChromeService(ChromeDriverManager().install())
 driver = webdriver.Chrome(service=service, options=chrome_options)
