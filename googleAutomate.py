@@ -32,6 +32,12 @@ class GoogleAutomation:
         # Name of user folder which will conatin History file
 
         chrome_options.add_argument("--profile-directory=Default")
+        chrome_options.add_argument("--mute-audio")
+        
+        chrome_options.add_experimental_option("prefs", {
+            #block image loading
+            "profile.managed_default_content_settings.images": 2,
+        })
         service = ChromeService(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=chrome_options)
 
@@ -46,11 +52,12 @@ class GoogleAutomation:
                 self.links.append(url)
                 driver.get(url)
                 soup = BeautifulSoup(driver.page_source, 'html.parser')
-        """
-                Doing Extra work that does not get added to the History File. May want to rework this.
                 search = soup.find_all('div', class_="yuRUbf")
                 for h in search:
-                self.links.append(h.a.get('href'))
+                    driver.get(h.a.get('href'))
+        """
+                Doing Extra work that does not get added to the History File. May want to rework this.
+                
                 self.links.extend(web_crawler(rnd.choice(self.links)))
         
         """
