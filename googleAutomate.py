@@ -11,7 +11,6 @@ import os, shutil;
 
 class GoogleAutomation:
     def __init__(self, path, keywordList, searchEngineList, overwrite=False, ):
-        
         # Name of user folder which will conatin History file
         self.path = path
         # Overwrite T/F
@@ -20,6 +19,7 @@ class GoogleAutomation:
         self.keywordList = self.read_keywords_from_file(keywordList)
         # List of Search Engines
         self.searchEngineList = self.read_keywords_from_file(searchEngineList)
+
         
     
     def read_keywords_from_file(self, file_path):
@@ -28,6 +28,7 @@ class GoogleAutomation:
         return keywords
     
     def run(self):
+
         # Setup for two drivers: one for google and one to load the pages.
 
         # First Driver for Google Searches
