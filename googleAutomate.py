@@ -7,7 +7,10 @@ from selenium.webdriver.support import expected_conditions as ec
 from webdriver_manager.chrome import ChromeDriverManager
 from webcrawler import web_crawler
 import random as rnd
-import os, shutil;
+import os, shutil
+import time
+
+start_time = time.time()
 
 class GoogleAutomation:
     def __init__(self, path, keywordList, searchEngineList, overwrite=False, ):
@@ -19,12 +22,14 @@ class GoogleAutomation:
         self.keywordList = self.read_keywords_from_file(keywordList)
         # List of Search Engines
         self.searchEngineList = self.read_keywords_from_file(searchEngineList)
+        self.count = 0
 
         
     
     def read_keywords_from_file(self, file_path):
         with open(file_path, 'r') as file:
-            keywords = [line.strip() for line in file.readlines()]
+            keywords = [line.strip().split() for line in file.readlines()]
+            print(keywords)
         return keywords
     
     def run(self):
@@ -38,7 +43,10 @@ class GoogleAutomation:
         # Removes the Default folder which contains the history files to start from a clean slate.
         if os.path.exists(self.path + "\\Default") and self.overwrite:
             shutil.rmtree(self.path + "\\Default")  
-        gChromeOptions.add_argument("--headless=new")
+        #gChromeOptions.add_argument("--headless=new") #breaks duckduckgo searches but speeds up google searches
+        gChromeOptions.add_argument("--disable-gpu")
+        gChromeOptions.add_argument("--no-sandbox")
+        gChromeOptions.add_argument("--disable-dev-shm-usage")
         gChromeOptions.add_argument("--user-data-dir=" + self.path)
         gChromeOptions.add_argument("--profile-directory=Default")
         gChromeOptions.add_argument("--mute-audio")
@@ -49,35 +57,45 @@ class GoogleAutomation:
         })
         service = ChromeService(ChromeDriverManager().install())
         googleDriver = webdriver.Chrome(service=service, options=gChromeOptions)
+        googleDriver.implicitly_wait(.2)
         
         rnd.shuffle(self.keywordList)
         for query in self.keywordList:
-            query = query.replace(' ', '+')  
+            query = "+".join(query)
+            print(query, type(query))
             # Specify number of pages on google search, each page contains 10 links
             n_pages = 3
             
             for page in range(1, n_pages):
                 
-                url = rnd.choice(self.searchEngineList) + query + "&start=" + str(page)
+                url, divClass = rnd.choice(self.searchEngineList)#Choses a random search engine from the list of engines
+                url = url + query + "&start=" + str(page)
+                
                 print("Visiting page " + str(url))
                 googleDriver.get(url)
-                WebDriverWait(googleDriver, timeout=10).until(
-                    ec.visibility_of_element_located((By.CLASS_NAME, "yuRUbf"))
-                )
+                self.count += 1
+                try:
+                    WebDriverWait(googleDriver, timeout=10).until(
+                        ec.visibility_of_element_located((By.CLASS_NAME, divClass))
+                    )
+                except:
+                    print("Search Engine timeout")
                 soup = BeautifulSoup(googleDriver.page_source, 'html.parser')
-                search = soup.find_all('div', class_="yuRUbf")
+                search = soup.find_all('div', class_=divClass)
                 print(str(len(search)) + " links found")
                 if search:
                     for h in search:
                         print("Visiting page " + str(h.a.get('href')))
                         googleDriver.get(h.a.get('href'))
+                        self.count += 1
                         try:
-                            WebDriverWait(googleDriver, timeout=.5).until(
+                            WebDriverWait(googleDriver, timeout=.2).until(
                                 ec.visibility_of_element_located((By.TAG_NAME, "html"))
                             )
                         except:
                             print("timeout while loading page")
         googleDriver.quit()        
+        print(self.count)
 
 
 
@@ -85,4 +103,5 @@ class GoogleAutomation:
 if __name__ == '__main__':      
     ga = GoogleAutomation( "C:\\Users\\keoca\\Desktop\\TWP3\\TestUser", "keywords.txt", "search_engines.txt", overwrite=True)
     ga.run()
+    print("--- %s seconds ---" % (time.time() - start_time))
     quit()
