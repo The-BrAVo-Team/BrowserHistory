@@ -183,4 +183,4 @@ This project is licensed under the MIT License.
 
 ## Authors
 
-The BraVo Team! 
+The BrAVo Team! 
