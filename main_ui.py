@@ -1,6 +1,7 @@
 import sys
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout,
-                               QPushButton, QLabel, QTextEdit, QLineEdit, QFileDialog, QMessageBox)
+                               QGridLayout, QPushButton, QLabel, QTextEdit, QLineEdit, 
+                               QFileDialog, QMessageBox, QComboBox, QRadioButton, QButtonGroup)
 from PySide6.QtCore import Slot
 
 # Import your project modules
@@ -18,108 +19,69 @@ class WebCrawlerApp(QWidget):
         self.setWindowTitle("Web Crawler App")
         self.setGeometry(300, 100, 800, 600)  # Set the window size and position
 
-        # Layout for web crawler
-        self.crawler_layout = QVBoxLayout()
+        main_layout = QVBoxLayout()
 
-        self.url_label = QLabel("URL:")
-        self.crawler_layout.addWidget(self.url_label)
+        # Date and Time Inputs
+        date_time_layout = QGridLayout()
 
-        self.url_entry = QLineEdit(self)
-        self.crawler_layout.addWidget(self.url_entry)
+        self.start_date_label = QLabel("Start Date:")
+        date_time_layout.addWidget(self.start_date_label, 0, 0)
+        self.start_date_entry = QLineEdit(self)
+        date_time_layout.addWidget(self.start_date_entry, 0, 1)
 
+        self.end_date_label = QLabel("End Date:")
+        date_time_layout.addWidget(self.end_date_label, 1, 0)
+        self.end_date_entry = QLineEdit(self)
+        date_time_layout.addWidget(self.end_date_entry, 1, 1)
+
+        self.start_time_label = QLabel("Start Time:")
+        date_time_layout.addWidget(self.start_time_label, 0, 2)
+        self.start_time_entry = QLineEdit(self)
+        date_time_layout.addWidget(self.start_time_entry, 0, 3)
+
+        self.end_time_label = QLabel("End Time:")
+        date_time_layout.addWidget(self.end_time_label, 1, 2)
+        self.end_time_entry = QLineEdit(self)
+        date_time_layout.addWidget(self.end_time_entry, 1, 3)
+
+        main_layout.addLayout(date_time_layout)
+
+        # Scenario Dropdown
+        self.scenario_label = QLabel("Scenario:")
+        main_layout.addWidget(self.scenario_label)
+        self.scenario_dropdown = QComboBox(self)
+        self.scenario_dropdown.addItems(["Scenario 1", "Scenario 2", "Scenario 3"])  # Add relevant scenarios
+        main_layout.addWidget(self.scenario_dropdown)
+
+        # Number of Records Dropdown
+        self.records_label = QLabel("Number of Records:")
+        main_layout.addWidget(self.records_label)
+        self.records_dropdown = QComboBox(self)
+        self.records_dropdown.addItems(["10", "20", "30", "40", "50"])  # Add relevant numbers
+        main_layout.addWidget(self.records_dropdown)
+
+        # Overwrite/Concatenate Radio Buttons
+        self.radio_group = QButtonGroup(self)
+        self.overwrite_radio = QRadioButton("Overwrite", self)
+        self.concatenate_radio = QRadioButton("Concatenate", self)
+        self.radio_group.addButton(self.overwrite_radio)
+        self.radio_group.addButton(self.concatenate_radio)
+        self.overwrite_radio.setChecked(True)
+
+        radio_layout = QHBoxLayout()
+        radio_layout.addWidget(self.overwrite_radio)
+        radio_layout.addWidget(self.concatenate_radio)
+        main_layout.addLayout(radio_layout)
+
+        # Crawl Button and Result Display
         self.crawl_button = QPushButton("Crawl", self)
         self.crawl_button.clicked.connect(self.crawl_url)
-        self.crawler_layout.addWidget(self.crawl_button)
+        main_layout.addWidget(self.crawl_button)
 
         self.crawl_result = QTextEdit(self)
-        self.crawler_layout.addWidget(self.crawl_result)
+        main_layout.addWidget(self.crawl_result)
 
-        # Layout for access history
-        self.history_layout = QVBoxLayout()
-
-        self.history_button = QPushButton("Fetch History", self)
-        self.history_button.clicked.connect(self.fetch_history)
-        self.history_layout.addWidget(self.history_button)
-
-        self.history_result = QTextEdit(self)
-        self.history_layout.addWidget(self.history_result)
-
-        # Layout for date and time generation
-        self.datetime_layout = QVBoxLayout()
-
-        self.start_date_label = QLabel("Start Date (YYYY-MM-DD):")
-        self.datetime_layout.addWidget(self.start_date_label)
-
-        self.start_date_entry = QLineEdit(self)
-        self.datetime_layout.addWidget(self.start_date_entry)
-
-        self.end_date_label = QLabel("End Date (YYYY-MM-DD):")
-        self.datetime_layout.addWidget(self.end_date_label)
-
-        self.end_date_entry = QLineEdit(self)
-        self.datetime_layout.addWidget(self.end_date_entry)
-
-        self.start_time_label = QLabel("Start Time (HH:MM:SS):")
-        self.datetime_layout.addWidget(self.start_time_label)
-
-        self.start_time_entry = QLineEdit(self)
-        self.datetime_layout.addWidget(self.start_time_entry)
-
-        self.end_time_label = QLabel("End Time (HH:MM:SS):")
-        self.datetime_layout.addWidget(self.end_time_label)
-
-        self.end_time_entry = QLineEdit(self)
-        self.datetime_layout.addWidget(self.end_time_entry)
-
-        self.generate_button = QPushButton("Generate", self)
-        self.generate_button.clicked.connect(self.generate_datetime)
-        self.datetime_layout.addWidget(self.generate_button)
-
-        self.datetime_result = QTextEdit(self)
-        self.datetime_layout.addWidget(self.datetime_result)
-
-        # Layout for Google automation
-        self.automation_layout = QVBoxLayout()
-
-        self.path_label = QLabel("Profile Path:")
-        self.automation_layout.addWidget(self.path_label)
-
-        self.path_entry = QLineEdit(self)
-        self.automation_layout.addWidget(self.path_entry)
-
-        self.keyword_label = QLabel("Keywords File:")
-        self.automation_layout.addWidget(self.keyword_label)
-
-        self.keyword_button = QPushButton("Browse", self)
-        self.keyword_button.clicked.connect(self.browse_keywords)
-        self.automation_layout.addWidget(self.keyword_button)
-
-        self.keyword_file = QLabel(self)
-        self.automation_layout.addWidget(self.keyword_file)
-
-        self.search_engine_label = QLabel("Search Engines File:")
-        self.automation_layout.addWidget(self.search_engine_label)
-
-        self.search_engine_button = QPushButton("Browse", self)
-        self.search_engine_button.clicked.connect(self.browse_search_engines)
-        self.automation_layout.addWidget(self.search_engine_button)
-
-        self.search_engine_file = QLabel(self)
-        self.automation_layout.addWidget(self.search_engine_file)
-
-        self.automation_button = QPushButton("Run Automation", self)
-        self.automation_button.clicked.connect(self.run_automation)
-        self.automation_layout.addWidget(self.automation_button)
-
-        # Main layout
-        self.main_layout = QVBoxLayout()
-
-        self.main_layout.addLayout(self.crawler_layout)
-        self.main_layout.addLayout(self.history_layout)
-        self.main_layout.addLayout(self.datetime_layout)
-        self.main_layout.addLayout(self.automation_layout)
-
-        self.setLayout(self.main_layout)
+        self.setLayout(main_layout)
 
     @Slot()
     def crawl_url(self):
