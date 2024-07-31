@@ -1,7 +1,7 @@
 import sys
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout,
                                QGridLayout, QPushButton, QLabel, QTextEdit, QLineEdit, 
-                               QFileDialog, QMessageBox, QComboBox, QRadioButton, QButtonGroup, QGroupBox, QFrame)
+                               QFileDialog, QMessageBox, QComboBox, QRadioButton, QButtonGroup, QGroupBox, QStackedWidget)
 from PySide6.QtCore import Slot, Qt
 
 # Import your project modules
@@ -10,9 +10,41 @@ from accessHistory import fetch_history
 from dateTime import create_date_time_output
 from googleAutomate import GoogleAutomation
 
-class WebCrawlerApp(QWidget):
-    def __init__(self):
+class StartMenu(QWidget):
+    def __init__(self, stacked_widget):
         super().__init__()
+        self.stacked_widget = stacked_widget
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle("Start Menu")
+        self.setGeometry(300, 100, 400, 300)  # Set the window size and position
+
+        layout = QVBoxLayout()
+
+        self.label = QLabel("Welcome to Web Crawler App", self)
+        self.label.setAlignment(Qt.AlignCenter)
+        self.label.setStyleSheet("font-size: 24px; font-weight: bold;")
+
+        self.play_button = QPushButton("Start", self)
+        self.play_button.setStyleSheet("font-size: 18px; padding: 10px;")
+        self.play_button.clicked.connect(self.open_main_app)
+
+        layout.addWidget(self.label)
+        layout.addStretch()
+        layout.addWidget(self.play_button)
+        layout.addStretch()
+
+        self.setLayout(layout)
+
+    @Slot()
+    def open_main_app(self):
+        self.stacked_widget.setCurrentIndex(1)
+
+class WebCrawlerApp(QWidget):
+    def __init__(self, stacked_widget):
+        super().__init__()
+        self.stacked_widget = stacked_widget
         self.initUI()
 
     def initUI(self):
@@ -193,6 +225,16 @@ class WebCrawlerApp(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = WebCrawlerApp()
-    window.show()
+
+    stacked_widget = QStackedWidget()
+    
+    start_menu = StartMenu(stacked_widget)
+    main_app = WebCrawlerApp(stacked_widget)
+
+    stacked_widget.addWidget(start_menu)
+    stacked_widget.addWidget(main_app)
+    
+    stacked_widget.setCurrentIndex(0)
+    
+    stacked_widget.show()
     sys.exit(app.exec())
