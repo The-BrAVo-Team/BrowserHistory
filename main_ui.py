@@ -1,8 +1,8 @@
 import sys
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout,
                                QGridLayout, QPushButton, QLabel, QTextEdit, QLineEdit, 
-                               QFileDialog, QMessageBox, QComboBox, QRadioButton, QButtonGroup)
-from PySide6.QtCore import Slot
+                               QFileDialog, QMessageBox, QComboBox, QRadioButton, QButtonGroup, QGroupBox, QFrame)
+from PySide6.QtCore import Slot, Qt
 
 # Import your project modules
 from webcrawler import web_crawler
@@ -22,6 +22,7 @@ class WebCrawlerApp(QWidget):
         main_layout = QVBoxLayout()
 
         # Date and Time Inputs
+        date_time_group = QGroupBox("Date and Time Configuration")
         date_time_layout = QGridLayout()
 
         self.start_date_label = QLabel("Start Date:")
@@ -44,23 +45,39 @@ class WebCrawlerApp(QWidget):
         self.end_time_entry = QLineEdit(self)
         date_time_layout.addWidget(self.end_time_entry, 1, 3)
 
-        main_layout.addLayout(date_time_layout)
+        date_time_group.setLayout(date_time_layout)
+        main_layout.addWidget(date_time_group)
 
         # Scenario Dropdown
+        scenario_group = QGroupBox("Scenario Selection")
+        scenario_layout = QVBoxLayout()
+
         self.scenario_label = QLabel("Scenario:")
-        main_layout.addWidget(self.scenario_label)
+        scenario_layout.addWidget(self.scenario_label)
         self.scenario_dropdown = QComboBox(self)
         self.scenario_dropdown.addItems(["Scenario 1", "Scenario 2", "Scenario 3"])  # Add relevant scenarios
-        main_layout.addWidget(self.scenario_dropdown)
+        scenario_layout.addWidget(self.scenario_dropdown)
+
+        scenario_group.setLayout(scenario_layout)
+        main_layout.addWidget(scenario_group)
 
         # Number of Records Dropdown
+        records_group = QGroupBox("Record Configuration")
+        records_layout = QVBoxLayout()
+
         self.records_label = QLabel("Number of Records:")
-        main_layout.addWidget(self.records_label)
+        records_layout.addWidget(self.records_label)
         self.records_dropdown = QComboBox(self)
         self.records_dropdown.addItems(["10", "20", "30", "40", "50"])  # Add relevant numbers
-        main_layout.addWidget(self.records_dropdown)
+        records_layout.addWidget(self.records_dropdown)
+
+        records_group.setLayout(records_layout)
+        main_layout.addWidget(records_group)
 
         # Overwrite/Concatenate Radio Buttons
+        operation_group = QGroupBox("Operation Mode")
+        operation_layout = QHBoxLayout()
+
         self.radio_group = QButtonGroup(self)
         self.overwrite_radio = QRadioButton("Overwrite", self)
         self.concatenate_radio = QRadioButton("Concatenate", self)
@@ -68,20 +85,55 @@ class WebCrawlerApp(QWidget):
         self.radio_group.addButton(self.concatenate_radio)
         self.overwrite_radio.setChecked(True)
 
-        radio_layout = QHBoxLayout()
-        radio_layout.addWidget(self.overwrite_radio)
-        radio_layout.addWidget(self.concatenate_radio)
-        main_layout.addLayout(radio_layout)
+        operation_layout.addWidget(self.overwrite_radio)
+        operation_layout.addWidget(self.concatenate_radio)
+        operation_group.setLayout(operation_layout)
+        main_layout.addWidget(operation_group)
 
         # Crawl Button and Result Display
         self.crawl_button = QPushButton("Crawl", self)
+        self.crawl_button.setToolTip("Start crawling the provided URL")
         self.crawl_button.clicked.connect(self.crawl_url)
         main_layout.addWidget(self.crawl_button)
 
         self.crawl_result = QTextEdit(self)
+        self.crawl_result.setReadOnly(True)
         main_layout.addWidget(self.crawl_result)
 
         self.setLayout(main_layout)
+
+        # Apply stylesheet for modern look
+        self.setStyleSheet("""
+            QWidget {
+                font-size: 14px;
+            }
+            QGroupBox {
+                font-weight: bold;
+                border: 1px solid gray;
+                border-radius: 5px;
+                margin-top: 10px;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                subcontrol-position: top center;
+                padding: 0 3px;
+            }
+            QPushButton {
+                background-color: #5cb85c;
+                color: white;
+                border-radius: 5px;
+                padding: 10px;
+                margin-top: 10px;
+            }
+            QPushButton:hover {
+                background-color: #4cae4c;
+            }
+            QLineEdit, QComboBox, QTextEdit {
+                padding: 5px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+        """)
 
     @Slot()
     def crawl_url(self):
