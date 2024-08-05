@@ -1,8 +1,10 @@
 import sys
-from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout,
-                               QGridLayout, QPushButton, QLabel, QTextEdit, QLineEdit, 
-                               QFileDialog, QMessageBox, QComboBox, QRadioButton, QButtonGroup, QGroupBox, QStackedWidget)
+from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, 
+                               QStackedWidget, QGroupBox, QGridLayout, QLineEdit, QComboBox,
+                               QHBoxLayout, QTextEdit, QRadioButton, QButtonGroup, QMessageBox,
+                               QFileDialog)
 from PySide6.QtCore import Slot, Qt
+from PySide6.QtGui import QPixmap
 
 # Import your project modules
 from webcrawler import web_crawler
@@ -18,16 +20,35 @@ class StartMenu(QWidget):
 
     def initUI(self):
         self.setWindowTitle("Start Menu")
-        self.setGeometry(300, 100, 400, 300)  # Set the window size and position
+        self.setGeometry(300, 100, 400, 300)
 
         layout = QVBoxLayout()
-
-        self.label = QLabel("Welcome to Web Crawler App", self)
+        
+        # Adding a logo and background image
+        self.logo_label = QLabel(self)
+        self.logo_pixmap = QPixmap("web_crawler_logo.png")  
+        self.logo_label.setPixmap(self.logo_pixmap)
+        self.logo_label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self.logo_label)
+        
+        # Adding welcome text
+        self.label = QLabel("Welcome to Web Crawler", self)
         self.label.setAlignment(Qt.AlignCenter)
-        self.label.setStyleSheet("font-size: 24px; font-weight: bold;")
-
+        self.label.setStyleSheet("font-size: 24px; font-weight: bold; color: #f5f5f5;")
+        
         self.play_button = QPushButton("Start", self)
-        self.play_button.setStyleSheet("font-size: 18px; padding: 10px;")
+        self.play_button.setStyleSheet("""
+            QPushButton {
+                font-size: 18px;
+                padding: 10px;
+                background-color: #5cb85c;
+                color: white;
+                border-radius: 5px;
+            }
+            QPushButton:hover {
+                background-color: #4cae4c;
+            }
+        """)
         self.play_button.clicked.connect(self.open_main_app)
 
         layout.addWidget(self.label)
@@ -36,6 +57,7 @@ class StartMenu(QWidget):
         layout.addStretch()
 
         self.setLayout(layout)
+
 
     @Slot()
     def open_main_app(self):
@@ -49,7 +71,7 @@ class WebCrawlerApp(QWidget):
 
     def initUI(self):
         self.setWindowTitle("Web Crawler App")
-        self.setGeometry(300, 100, 800, 600)  # Set the window size and position
+        self.setGeometry(300, 100, 400, 300)
 
         main_layout = QVBoxLayout()
 
@@ -87,7 +109,7 @@ class WebCrawlerApp(QWidget):
         self.scenario_label = QLabel("Scenario:")
         scenario_layout.addWidget(self.scenario_label)
         self.scenario_dropdown = QComboBox(self)
-        self.scenario_dropdown.addItems(["Scenario 1", "Scenario 2", "Scenario 3"])  # Add relevant scenarios
+        self.scenario_dropdown.addItems(["Scenario 1", "Scenario 2", "Scenario 3"])
         scenario_layout.addWidget(self.scenario_dropdown)
 
         scenario_group.setLayout(scenario_layout)
@@ -100,7 +122,7 @@ class WebCrawlerApp(QWidget):
         self.records_label = QLabel("Number of Records:")
         records_layout.addWidget(self.records_label)
         self.records_dropdown = QComboBox(self)
-        self.records_dropdown.addItems(["10", "20", "30", "40", "50"])  # Add relevant numbers
+        self.records_dropdown.addItems(["10", "20", "30", "40", "50"])
         records_layout.addWidget(self.records_dropdown)
 
         records_group.setLayout(records_layout)
