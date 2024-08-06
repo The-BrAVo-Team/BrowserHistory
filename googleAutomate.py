@@ -62,8 +62,7 @@ class GoogleAutomation:
         #     #block image loading
         #     "profile.managed_default_content_settings.images": 2,
         # })
-        service = ChromeService(ChromeDriverManager().install())
-        googleDriver = webdriver.Chrome(service=service, options=gChromeOptions)
+        googleDriver = webdriver.Chrome( options=gChromeOptions)
         
         rnd.shuffle(self.keywordList)
         links = []
@@ -97,7 +96,7 @@ class GoogleAutomation:
             "profile.managed_default_content_settings.images": 2,
             "profile.managed_default_content_settings.javascript": 2,
         })
-        webDriver = webdriver.Chrome(service=service, options=gChromeOptions)
+        webDriver = webdriver.Chrome( options=gChromeOptions)
         webDriver.set_page_load_timeout(5)
         if links:
             for url in links:
