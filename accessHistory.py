@@ -16,8 +16,7 @@ def fetch_history(db_path="C:\\Users\\keoca\\Desktop\\TWP3\\TestUser\\Default\\H
     except sqlite3.Error as e:
         print(f"An error occurred: {e}")
         return []
-    
-    
+
 def modify_timestamps(start_date, end_date, start_time, end_time, db_path="C:\\Users\\keoca\\Desktop\\TWP3\\TestUser\\Default\\History"):
     dateTimeList = dateTime.create_date_time_output(start_date, end_date, start_time, end_time)
     
@@ -25,13 +24,21 @@ def modify_timestamps(start_date, end_date, start_time, end_time, db_path="C:\\U
         con = sqlite3.connect(db_path)
         cur = con.cursor()
         
-        for date_time in dateTimeList:
-            webkit_timestamp = epochConverter.date_to_webkit(date_time)
-            
-            # Update the timestamp for all URLs (or add filtering logic if needed)
-            cur.execute("UPDATE urls SET last_visit_time = ? WHERE last_visit_time IS NOT NULL", (webkit_timestamp,))
-            
+        # Fetch rows with their ids
+        rows = cur.execute("SELECT rowid FROM visits WHERE visit_time IS NOT NULL").fetchall()
         
+        if len(dateTimeList) > len(rows):
+            print("Warning: More timestamps than rows available.")
+            dateTimeList = dateTimeList[:len(rows)]  # Adjust to the number of available rows
+
+        # Update rows one by one
+        for idx, date_time in enumerate(dateTimeList):
+            webkit_timestamp = epochConverter.date_to_webkit(date_time)
+            row_id = rows[idx][0]
+            
+            # Update only the specific row
+            cur.execute("UPDATE visits SET visit_time = ? WHERE id = ?", (webkit_timestamp, row_id))
+            
         con.commit()
         con.close()
         print("Timestamps updated successfully.")
