@@ -30,6 +30,7 @@ def modify_timestamps(start_date, end_date, start_time, end_time, db_path="C:\\U
             
             # Update the timestamp for all URLs (or add filtering logic if needed)
             cur.execute("UPDATE urls SET last_visit_time = ? WHERE last_visit_time IS NOT NULL", (webkit_timestamp,))
+            
         
         con.commit()
         con.close()
