@@ -1,5 +1,6 @@
 import datetime
 import random
+from epochConverter import epochConverter
 
 def generate_time_stamp(start_time, end_time):
     start = datetime.datetime.strptime(start_time, "%H:%M:%S")
@@ -30,5 +31,5 @@ def create_date_time_output(start_date, end_date, start_time, end_time):
     return sorted(date_timestamps) # Sort the datetime output
 
 if __name__ == '__main__':
-    print(create_date_time_output("2021-05-22", "2021-06-22", "22:00:00", "23:00:00"))
-
+    date_list = create_date_time_output("2021-05-22", "2021-06-22", "22:00:00", "23:00:00")
+    print(epochConverter.date_to_webkit(date_list[6]))

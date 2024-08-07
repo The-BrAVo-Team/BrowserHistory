@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import random
 
 class epochConverter:
     def date_from_webkit(webkit_timestamp):
@@ -11,7 +12,14 @@ class epochConverter:
         date_ = datetime.strptime(date_string, '%Y-%m-%d %H:%M:%S')
         diff = date_ - epoch_start
         microseconds_since_epoch = diff.days * 86400 * 10**6 + diff.seconds * 10**6 + diff.microseconds
-        return '{:<017d}'.format(microseconds_since_epoch)
+        
+        # Generate a random integer between 0 and 999,999
+        random_microseconds = random.randint(0, 999999)
+        
+        webkit_timestamp = microseconds_since_epoch + random_microseconds
+        
+        return webkit_timestamp
+
 
 """
 # Webkit to date
