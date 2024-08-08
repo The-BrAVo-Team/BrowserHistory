@@ -47,7 +47,7 @@ def modify_timestamps(start_date, end_date, start_time, end_time, db_path="C:\\U
         print(f"An error occurred: {e}")
 
 if __name__ == '__main__':
-    modify_timestamps("2024-04-14", "2024-05-14", "20:00:00", "23:59:59")
+    modify_timestamps("2024-1-1", "2024-12-31", "20:00:00", "23:59:59")
     history = fetch_history()
     for url in history:
         print(url)
