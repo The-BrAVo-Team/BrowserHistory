@@ -2,8 +2,8 @@ import sys
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, 
                                QStackedWidget, QGroupBox, QGridLayout, QLineEdit, QComboBox,
                                QHBoxLayout, QTextEdit, QRadioButton, QButtonGroup, QMessageBox,
-                               QFileDialog)
-from PySide6.QtCore import Slot, Qt
+                               QFileDialog, QProgressBar)
+from PySide6.QtCore import Slot, Qt, QTimer
 from PySide6.QtGui import QPixmap
 
 # Import your project modules
@@ -20,7 +20,7 @@ class StartMenu(QWidget):
 
     def initUI(self):
         self.setWindowTitle("Start Menu")
-        self.setGeometry(300, 100, 400, 300)
+        self.setGeometry(300, 100, 600, 400)  # Adjusted for better visual appearance
 
         layout = QVBoxLayout()
         
@@ -34,7 +34,9 @@ class StartMenu(QWidget):
         # Adding welcome text
         self.label = QLabel("Welcome to Web Crawler", self)
         self.label.setAlignment(Qt.AlignCenter)
-        self.label.setStyleSheet("font-size: 24px; font-weight: bold; color: #f5f5f5;")
+        self.label.setStyleSheet("font-size: 24px; font-weight: bold; color: white;")
+        layout.addWidget(self.label)
+
         
         self.play_button = QPushButton("Start", self)
         self.play_button.setStyleSheet("""
@@ -44,23 +46,51 @@ class StartMenu(QWidget):
                 background-color: #5cb85c;
                 color: white;
                 border-radius: 5px;
+                margin: 10px 20px;
             }
             QPushButton:hover {
                 background-color: #4cae4c;
             }
         """)
-        self.play_button.clicked.connect(self.open_main_app)
+        self.play_button.clicked.connect(self.start_loading)
 
-        layout.addWidget(self.label)
         layout.addStretch()
         layout.addWidget(self.play_button)
         layout.addStretch()
 
+        self.progress_bar = QProgressBar(self)
+        self.progress_bar.setVisible(False)
+        layout.addWidget(self.progress_bar)
+        
+        self.loading_label = QLabel("Loading...", self)
+        self.loading_label.setAlignment(Qt.AlignCenter)
+        self.loading_label.setStyleSheet("font-size: 14px; color: white;")
+        self.loading_label.setVisible(False)
+        layout.addWidget(self.loading_label)
+
         self.setLayout(layout)
 
+    @Slot()
+    def start_loading(self):
+        self.progress_bar.setVisible(True)
+        self.loading_label.setVisible(True)
+        self.progress_bar.setValue(0)
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_progress)
+        self.timer.start(50)  # Adjust the interval for the desired speed
+
+    @Slot()
+    def update_progress(self):
+        value = self.progress_bar.value() + 1
+        self.progress_bar.setValue(value)
+        if value >= 100:
+            self.timer.stop()
+            self.open_main_app()
 
     @Slot()
     def open_main_app(self):
+        self.progress_bar.setVisible(False)
+        self.loading_label.setVisible(False)
         self.stacked_widget.setCurrentIndex(1)
 
 class WebCrawlerApp(QWidget):
@@ -71,7 +101,7 @@ class WebCrawlerApp(QWidget):
 
     def initUI(self):
         self.setWindowTitle("Web Crawler App")
-        self.setGeometry(300, 100, 400, 300)
+        self.setGeometry(300, 100, 600, 400)  # Adjusted for better visual appearance
 
         main_layout = QVBoxLayout()
 
