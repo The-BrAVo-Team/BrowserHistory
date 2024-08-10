@@ -13,15 +13,26 @@ import time
 start_time = time.time()
 
 class GoogleAutomation:
-    def __init__(self, path, keywordList, searchEngineList, overwrite=False, ):
+    def __init__(self, path, scenario, overwrite=False, ):
         # Name of user folder which will conatin History file
         self.path = path
+        
+        scenario_keywords =  {
+            "clean": "keywords.txt",
+            "ip" : "ip_case.txt",
+            "hom" : "hom_case.txt",
+            "cc" : "cc_case.txt",
+            "drug" : "drug_case.txt"
+        }
+        
+        
         # Overwrite T/F
         self.overwrite = overwrite
         # List of Keywords
-        self.keywordList = self.read_keywords_from_file(keywordList)
+        self.keywordList = self.read_keywords_from_file(scenario_keywords["clean"]) + self.read_keywords_from_file(scenario_keywords[scenario])
+        print(self.keywordList)
         # List of Search Engines
-        self.searchEngineList = self.read_keywords_from_file(searchEngineList)
+        self.searchEngineList = self.read_keywords_from_file("search_engines.txt")
         self.count = 0
 
         
@@ -107,8 +118,6 @@ class GoogleAutomation:
         webOptions.add_argument("--user-data-dir=" + self.path)
         webOptions.add_argument("--profile-directory=Default")
         webOptions.add_experimental_option("prefs", {
-            #block image loading
-            "profile.managed_default_content_settings.images": 2,
             "profile.managed_default_content_settings.javascript": 2,
         })
         webDriver = webdriver.Chrome( options=webOptions)
@@ -157,7 +166,7 @@ class GoogleAutomation:
 
 
 if __name__ == '__main__':      
-    ga = GoogleAutomation( "C:\\Users\\keoca\\Desktop\\TWP3\\TestUser", "keywords.txt", "search_engines.txt", overwrite=True)
+    ga = GoogleAutomation( "C:\\Users\\keoca\\Desktop\\TWP3\\TestUser", "ip", overwrite=True)
     ga.run()
     print()
     print("--- %s seconds ---" % (time.time() - start_time))
