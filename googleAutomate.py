@@ -18,7 +18,7 @@ class GoogleAutomation:
         self.path = path
         
         scenario_keywords =  {
-            "clean": "keywords.txt",
+            "clean": None,
             "ip" : "ip_case.txt",
             "hom" : "hom_case.txt",
             "cc" : "cc_case.txt",
@@ -29,7 +29,7 @@ class GoogleAutomation:
         # Overwrite T/F
         self.overwrite = overwrite
         # List of Keywords
-        self.keywordList = self.read_keywords_from_file(scenario_keywords["clean"]) + self.read_keywords_from_file(scenario_keywords[scenario])
+        self.keywordList = self.read_keywords_from_file("keywords.txt") + self.read_keywords_from_file(scenario_keywords[scenario])
         print(self.keywordList)
         # List of Search Engines
         self.searchEngineList = self.read_keywords_from_file("search_engines.txt")
@@ -38,6 +38,8 @@ class GoogleAutomation:
         
     
     def read_keywords_from_file(self, file_path):
+        if file_path == None:
+            return [""]
         with open(file_path, 'r') as file:
             keywords = [line.strip().split() for line in file.readlines()]
         return keywords
