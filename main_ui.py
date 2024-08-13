@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QLabel, QPush
                                QFileDialog, QProgressBar)
 from PySide6.QtCore import Slot, Qt, QTimer
 from PySide6.QtGui import QPixmap
+import re
 
 # Import your project modules
 from webcrawler import web_crawler
@@ -109,22 +110,22 @@ class WebCrawlerApp(QWidget):
         date_time_group = QGroupBox("Date and Time Configuration")
         date_time_layout = QGridLayout()
 
-        self.start_date_label = QLabel("Start Date:")
+        self.start_date_label = QLabel("Start Date (YYYY-MM-DD):")
         date_time_layout.addWidget(self.start_date_label, 0, 0)
         self.start_date_entry = QLineEdit(self)
         date_time_layout.addWidget(self.start_date_entry, 0, 1)
 
-        self.end_date_label = QLabel("End Date:")
+        self.end_date_label = QLabel("End Date (YYYY-MM-DD):")
         date_time_layout.addWidget(self.end_date_label, 1, 0)
         self.end_date_entry = QLineEdit(self)
         date_time_layout.addWidget(self.end_date_entry, 1, 1)
 
-        self.start_time_label = QLabel("Start Time:")
+        self.start_time_label = QLabel("Start Time (HH:MM):")
         date_time_layout.addWidget(self.start_time_label, 0, 2)
         self.start_time_entry = QLineEdit(self)
         date_time_layout.addWidget(self.start_time_entry, 0, 3)
 
-        self.end_time_label = QLabel("End Time:")
+        self.end_time_label = QLabel("End Time (HH:MM):")
         date_time_layout.addWidget(self.end_time_label, 1, 2)
         self.end_time_entry = QLineEdit(self)
         date_time_layout.addWidget(self.end_time_entry, 1, 3)
@@ -175,6 +176,11 @@ class WebCrawlerApp(QWidget):
         main_layout.addWidget(operation_group)
 
         # Crawl Button and Result Display
+        self.url_label = QLabel("Enter URL:")
+        main_layout.addWidget(self.url_label)
+        self.url_entry = QLineEdit(self)
+        main_layout.addWidget(self.url_entry)
+
         self.crawl_button = QPushButton("Crawl", self)
         self.crawl_button.setToolTip("Start crawling the provided URL")
         self.crawl_button.clicked.connect(self.crawl_url)
@@ -219,16 +225,41 @@ class WebCrawlerApp(QWidget):
             }
         """)
 
+    def validate_date(self, date_str):
+        return re.match(r'^\d{4}-\d{2}-\d{2}$', date_str)
+
+    def validate_time(self, time_str):
+        return re.match(r'^\d{2}:\d{2}$', time_str)
+
+    def validate_url(self, url_str):
+        return re.match(r'^https?:\/\/', url_str)
+
     @Slot()
     def crawl_url(self):
         url = self.url_entry.text()
-        if url:
-            links = web_crawler(url)
-            self.crawl_result.clear()
-            for link in links:
-                self.crawl_result.append(link)
-        else:
-            QMessageBox.critical(self, "Error", "Please enter a URL.")
+        start_date = self.start_date_entry.text()
+        end_date = self.end_date_entry.text()
+        start_time = self.start_time_entry.text()
+        end_time = self.end_time_entry.text()
+
+        if not self.validate_url(url):
+            QMessageBox.critical(self, "Error", "Please enter a valid URL.")
+            return
+
+        if not (self.validate_date(start_date) and self.validate_date(end_date)):
+            QMessageBox.critical(self, "Error", "Please enter valid dates in YYYY-MM-DD format.")
+            return
+
+        if not (self.validate_time(start_time) and self.validate_time(end_time)):
+            QMessageBox.critical(self, "Error", "Please enter valid times in HH:MM format.")
+            return
+
+        # Assuming other necessary input fields are already validated
+
+        links = web_crawler(url)
+        self.crawl_result.clear()
+        for link in links:
+            self.crawl_result.append(link)
 
     @Slot()
     def fetch_history(self):
@@ -243,6 +274,15 @@ class WebCrawlerApp(QWidget):
         end_date = self.end_date_entry.text()
         start_time = self.start_time_entry.text()
         end_time = self.end_time_entry.text()
+
+        if not (self.validate_date(start_date) and self.validate_date(end_date)):
+            QMessageBox.critical(self, "Error", "Please enter valid dates in YYYY-MM-DD format.")
+            return
+
+        if not (self.validate_time(start_time) and self.validate_time(end_time)):
+            QMessageBox.critical(self, "Error", "Please enter valid times in HH:MM format.")
+            return
+
         if start_date and end_date and start_time and end_time:
             datetimes = create_date_time_output(start_date, end_date, start_time, end_time)
             self.datetime_result.clear()
