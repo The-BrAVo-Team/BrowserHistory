@@ -1,8 +1,9 @@
 import sqlite3
 from epochConverter import epochConverter
 import dateTime
-
-def fetch_history(db_path="C:\\Users\\keoca\\Desktop\\TWP3\\TestUser\\Default\\History"):
+import os
+username = os.getlogin()
+def fetch_history(db_path=f'C:\\Users\\{username}\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\History'):
     """
     Fetches browsing history from the SQLite database.
     """
@@ -17,7 +18,7 @@ def fetch_history(db_path="C:\\Users\\keoca\\Desktop\\TWP3\\TestUser\\Default\\H
         print(f"An error occurred: {e}")
         return []
 
-def modify_timestamps(start_date, end_date, start_time, end_time, db_path="C:\\Users\\keoca\\Desktop\\TWP3\\TestUser\\Default\\History"):
+def modify_timestamps(start_date, end_date, start_time, end_time, db_path=f'C:\\Users\\{username}\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\History'):
     dateTimeList = dateTime.create_date_time_output(start_date, end_date, start_time, end_time)
     
     try:

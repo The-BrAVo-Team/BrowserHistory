@@ -13,9 +13,16 @@ import time
 start_time = time.time()
 
 class GoogleAutomation:
-    def __init__(self, path, scenario, overwrite=False, ):
+    def __init__(self, scenario, overwrite=False, ):
         # Name of user folder which will conatin History file
-        self.path = path
+        dirname = os.path.dirname(__file__)
+        username = os.getlogin()
+        
+        #f'C:\\Users\\{username}\\Desktop\\ChromeData'
+        
+        self.path = f'C:\\Users\\{username}\\AppData\\Local\\Google\\Chrome\\User Data'
+        
+        
         
         scenario_keywords =  {
             "clean": None,
@@ -61,8 +68,8 @@ class GoogleAutomation:
         # Path to any folder where webdriver chrome data will go
         # WILL OVERWRITE PATH/Default
         # Removes the Default folder which contains the history files to start from a clean slate.
-        if os.path.exists(self.path + "\\Default") and self.overwrite:
-            shutil.rmtree(self.path + "\\Default")
+        if os.path.exists(self.path + "\\Default\\History") and self.overwrite:
+            os.remove(self.path + "\\Default\\History")
         gChromeOptions = webdriver.ChromeOptions()  
         gChromeOptions.add_argument("--headless=new") #breaks duckduckgo searches but speeds up google searches
         gChromeOptions.add_argument("--disable-gpu")
@@ -158,6 +165,11 @@ class GoogleAutomation:
                 self.count += 1
         webDriver.quit()
         
+        webOptions.add_experimental_option("prefs", {
+            "profile.managed_default_content_settings.javascript": 1,
+        })
+        webDriver = webdriver.Chrome( options=webOptions)
+        webDriver.quit()
         
         print(self.count)
         
@@ -168,7 +180,7 @@ class GoogleAutomation:
 
 
 if __name__ == '__main__':      
-    ga = GoogleAutomation( "C:\\Users\\keoca\\Desktop\\TWP3\\TestUser", "ip", overwrite=True)
+    ga = GoogleAutomation( "clean", overwrite=True)
     ga.run()
     print()
     print("--- %s seconds ---" % (time.time() - start_time))
