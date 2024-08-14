@@ -109,9 +109,8 @@ class WebCrawlerApp(QWidget):
         self.scenario_label = QLabel("Scenario:")
         scenario_layout.addWidget(self.scenario_label)
         self.scenario_dropdown = QComboBox(self)
-        self.scenario_dropdown.addItems(["Scenario 1", "Scenario 2", "Scenario 3"])
+        self.scenario_dropdown.addItems(["Normal Traffic", "Homicide", "Narcotics", "Child Cornography", "IP Theft"])
         scenario_layout.addWidget(self.scenario_dropdown)
-
         scenario_group.setLayout(scenario_layout)
         main_layout.addWidget(scenario_group)
 
