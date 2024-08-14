@@ -8,6 +8,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from webcrawler import web_crawler
 import random as rnd
 import os, shutil
+from accessHistory import modify_timestamps
 import time
 
 start_time = time.time()
@@ -170,8 +171,9 @@ class GoogleAutomation:
         })
         webDriver = webdriver.Chrome( options=webOptions)
         webDriver.quit()
-        
         print(self.count)
+        modify_timestamps("2024-1-1", "2024-12-31", "20:00:00", "23:59:59")
+        
         
         
         
