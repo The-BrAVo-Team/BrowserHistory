@@ -32,7 +32,7 @@ class StartMenu(QWidget):
         layout.addWidget(self.logo_label)
         
         # Adding welcome text
-        self.label = QLabel("Welcome to Web Crawler", self)
+        self.label = QLabel("Welcome to Browser_Gen", self)
         self.label.setAlignment(Qt.AlignCenter)
         self.label.setStyleSheet("font-size: 24px; font-weight: bold; color: #f5f5f5;")
         
