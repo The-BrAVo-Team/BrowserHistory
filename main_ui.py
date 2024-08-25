@@ -109,7 +109,7 @@ class WebCrawlerApp(QWidget):
         self.scenario_label = QLabel("Scenario:")
         scenario_layout.addWidget(self.scenario_label)
         self.scenario_dropdown = QComboBox(self)
-        self.scenario_dropdown.addItems(["Scenario 1", "Scenario 2", "Scenario 3"])
+        self.scenario_dropdown.addItems(["IP Theft", "Clean", "Homicide", "Narcotics", "Child Corn"])
         scenario_layout.addWidget(self.scenario_dropdown)
 
         scenario_group.setLayout(scenario_layout)
@@ -122,7 +122,7 @@ class WebCrawlerApp(QWidget):
         self.records_label = QLabel("Number of Records:")
         records_layout.addWidget(self.records_label)
         self.records_dropdown = QComboBox(self)
-        self.records_dropdown.addItems(["10", "20", "30", "40", "50"])
+        self.records_dropdown.addItems(["1000", "1500", "2000"])
         records_layout.addWidget(self.records_dropdown)
 
         records_group.setLayout(records_layout)
