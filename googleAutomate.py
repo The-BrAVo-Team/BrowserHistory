@@ -14,8 +14,10 @@ import time
 start_time = time.time()
 
 class GoogleAutomation:
-    def __init__(self, scenario, overwrite=False, ):
+    def __init__(self, scenario, startDate, endDate, startTime, endTime, overwrite=False, ):
         # Name of user folder which will conatin History file
+        
+        self.startDate, self.endDate, self.startTime, self.endTime = startDate, endDate, startTime, endTime
         username = os.getlogin()
         
         self.path = f'C:\\Users\\{username}\\AppData\\Local\\Google\\Chrome\\User Data'
@@ -99,7 +101,7 @@ class GoogleAutomation:
         answerKey = []
         detected = False
         
-        while self.count < 1000:
+        while self.count < 200:
             n_pages = 2
             googleDriver = webdriver.Chrome( options=gChromeOptions)
             while not detected:
@@ -160,7 +162,7 @@ class GoogleAutomation:
             #Go through all of the links
             webDriver = webdriver.Chrome( options=webOptions)
             webDriver.set_page_load_timeout(5)
-            while links and self.count < 1000:
+            while links and self.count < 200:
                 url = links.pop(0)
                 try:
                     self.visit(webDriver,url)
@@ -183,7 +185,7 @@ class GoogleAutomation:
         answerfile = open(f'C:\\Users\\{username}\\Desktop\\Answer Key.txt','w')
         answerfile.writelines(line + '\n' for line in answerKey)
         answerfile.close()
-        modify_timestamps("2024-1-1", "2024-12-31", "20:00:00", "23:59:59")
+        modify_timestamps(self.startDate, self.endDate, self.startTime, self.endTime)
         
         
         
@@ -193,7 +195,7 @@ class GoogleAutomation:
 
 
 if __name__ == '__main__':      
-    ga = GoogleAutomation( "ip", overwrite=True)
+    ga = GoogleAutomation("ip", "2024-1-1", "2024-12-31", "20:00:00", "23:59:59", overwrite=True)
     ga.run()
     print()
     print("--- %s seconds ---" % (time.time() - start_time))

@@ -82,21 +82,25 @@ class WebCrawlerApp(QWidget):
         self.start_date_label = QLabel("Start Date:")
         date_time_layout.addWidget(self.start_date_label, 0, 0)
         self.start_date_entry = QLineEdit(self)
+        self.start_date_entry.setPlaceholderText("yyyy-mm-dd")
         date_time_layout.addWidget(self.start_date_entry, 0, 1)
 
         self.end_date_label = QLabel("End Date:")
         date_time_layout.addWidget(self.end_date_label, 1, 0)
         self.end_date_entry = QLineEdit(self)
+        self.end_date_entry.setPlaceholderText("yyyy-mm-dd")
         date_time_layout.addWidget(self.end_date_entry, 1, 1)
 
         self.start_time_label = QLabel("Start Time:")
         date_time_layout.addWidget(self.start_time_label, 0, 2)
         self.start_time_entry = QLineEdit(self)
+        self.start_time_entry.setPlaceholderText("HH:MM:SS")
         date_time_layout.addWidget(self.start_time_entry, 0, 3)
 
         self.end_time_label = QLabel("End Time:")
         date_time_layout.addWidget(self.end_time_label, 1, 2)
         self.end_time_entry = QLineEdit(self)
+        self.end_time_entry.setPlaceholderText("HH:MM:SS")
         date_time_layout.addWidget(self.end_time_entry, 1, 3)
 
         date_time_group.setLayout(date_time_layout)
@@ -147,7 +151,7 @@ class WebCrawlerApp(QWidget):
         # Crawl Button and Result Display
         self.crawl_button = QPushButton("Crawl", self)
         self.crawl_button.setToolTip("Start crawling the provided URL")
-        self.crawl_button.clicked.connect(self.crawl_url)
+        self.crawl_button.clicked.connect(self.run_automation)
         main_layout.addWidget(self.crawl_button)
 
         self.crawl_result = QTextEdit(self)
@@ -191,14 +195,16 @@ class WebCrawlerApp(QWidget):
 
     @Slot()
     def crawl_url(self):
-        url = self.url_entry.text()
-        if url:
-            links = web_crawler(url)
-            self.crawl_result.clear()
-            for link in links:
-                self.crawl_result.append(link)
-        else:
-            QMessageBox.critical(self, "Error", "Please enter a URL.")
+        #
+        # ["IP Theft", "Clean", "Homicide", "Narcotics", "Child Corn"]
+        scenarios = {
+            "IP Theft" : "ip",
+            "Clean" : "clean",
+            "Homicide" : "hom",
+            "Narcotics" : "drug",
+            "Child Corn" : "cc"
+        }
+        
 
     @Slot()
     def fetch_history(self):
@@ -209,10 +215,10 @@ class WebCrawlerApp(QWidget):
 
     @Slot()
     def generate_datetime(self):
-        start_date = self.start_date_entry.text()
-        end_date = self.end_date_entry.text()
-        start_time = self.start_time_entry.text()
-        end_time = self.end_time_entry.text()
+        self.start_date = self.start_date_entry.text()
+        self.end_date = self.end_date_entry.text()
+        self.start_time = self.start_time_entry.text()
+        self.end_time = self.end_time_entry.text()
         if start_date and end_date and start_time and end_time:
             datetimes = create_date_time_output(start_date, end_date, start_time, end_time)
             self.datetime_result.clear()
@@ -235,11 +241,20 @@ class WebCrawlerApp(QWidget):
 
     @Slot()
     def run_automation(self):
-        path = self.path_entry.text()
-        keyword_file = self.keyword_file.text()
-        search_engine_file = self.search_engine_file.text()
-        if path and keyword_file and search_engine_file:
-            ga = GoogleAutomation(path, keyword_file, search_engine_file)
+        scenarios = {
+            "IP Theft" : "ip",
+            "Clean" : "clean",
+            "Homicide" : "hom",
+            "Narcotics" : "drug",
+            "Child Corn" : "cc"
+        }
+        start_date = self.start_date_entry.text()
+        end_date = self.end_date_entry.text()
+        start_time = self.start_time_entry.text()
+        end_time = self.end_time_entry.text()
+        if start_date and end_date and start_time and end_time:
+            QMessageBox.information(self, "One Last Step", "Press ok to run Google Automation. This may take up to 15 minutes.")
+            ga = GoogleAutomation( scenarios[self.scenario_dropdown.currentText()], start_date, end_date, start_time, end_time, overwrite=True)
             ga.run()
             QMessageBox.information(self, "Success", "Google automation completed.")
         else:
